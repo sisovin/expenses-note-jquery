@@ -46,13 +46,42 @@
             <label for="date" class="form-label">Date</label>
             <input type="text" class="form-control border-primary" id="date" required>
           </div>
-          <button type="submit" class="btn btn-primary">Add Expense</button>
-          <button type="button" class="btn btn-primary float-end"
-            onclick="window.location.href='categories.html'">Categories Form</button>
+          <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary">Add Expense</button>
+            <button type="button" class="btn btn-primary mx-2" onclick="window.location.href='income.html'">Income
+              Form</button>
+            <button type="button" class="btn btn-primary" onclick="window.location.href='categories.html'">Categories
+              Form</button>
+          </div>
         </form>
       </div>
     </div>
 
+    <div class="table-container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2 class="text-center mt-4">Incomes Transaction</h2>
+          <table class="table table-striped mt-4">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="incomeTable">
+              <!-- Incomes will be added here dynamically -->
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="1" class="text-center">Income Total</td>
+                <td id="totalIncomeAmount"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
     <div class="table-container">
       <div class="row">
         <div class="col-md-12">
@@ -70,6 +99,20 @@
             <tbody id="expenseTable">
               <!-- Expenses will be added here dynamically -->
             </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="1" class="text-center">Expense Total</td>
+                <td id="totalExpenseAmount"></td>
+              </tr>
+              <tr>
+                <td colspan="1" class="text-center">Balance</td>
+                <td id="balance"></td>
+              </tr>
+              <tr>
+                <td colspan="1" class="text-center">Net Income</td>
+                <td id="netIncome"></td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>
@@ -82,6 +125,7 @@
       });
     });
   </script>
+  <script src="js/income.js"></script>
   <script src="js/app.js"></script>
 </body>
 

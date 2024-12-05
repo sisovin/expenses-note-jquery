@@ -15,10 +15,31 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Initialize database
 app.get('/init-db', (req, res) => {
   db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS categories (
+    db.run(
+      `CREATE TABLE IF NOT EXISTS categories (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL
-      )`);
+      )`,
+      (err) => {
+        if (err) {
+          console.error('Error creating categories table:', err.message);
+        }
+      }
+    );
+
+    db.run(
+      `CREATE TABLE IF NOT EXISTS incomes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      amount REAL NOT NULL,
+      date TEXT NOT NULL
+    )`,
+      (err) => {
+        if (err) {
+          console.error('Error creating incomes table:', err.message);
+        }
+      }
+    );
 
     db.run(
       `CREATE TABLE IF NOT EXISTS expenses (
@@ -31,6 +52,7 @@ app.get('/init-db', (req, res) => {
       )`,
       (err) => {
         if (err) {
+          console.error('Error creating expenses table:', err.message);
           res.status(500).send('Error initializing database');
         } else {
           res.send('Database initialized successfully');
@@ -44,6 +66,7 @@ app.get('/init-db', (req, res) => {
 app.get('/drop-tables', (req, res) => {
   db.serialize(() => {
     db.run(`DROP TABLE IF EXISTS expenses`);
+    db.run(`DROP TABLE IF EXISTS incomes`);
     db.run(`DROP TABLE IF EXISTS categories`, (err) => {
       if (err) {
         res.status(500).send('Error dropping tables');
@@ -142,6 +165,7 @@ app.post('/expenses', (req, res) => {
   const { description, amount, category_id, date } = req.body;
   db.run(
     `INSERT INTO expenses (description, amount, category_id, date) VALUES (?, ?, ?, ?)`,
+
     [description, amount, category_id, date],
     (err) => {
       if (err) {
@@ -180,6 +204,60 @@ app.delete('/expenses/:id', (req, res) => {
   });
 });
 
+// CRUD operations for incomes
+app.get('/incomes', (req, res) => {
+  db.all('SELECT * FROM incomes', [], (err, rows) => {
+    if (err) {
+      res.status(500).send(err.message);
+    } else {
+      res.json(rows);
+    }
+  });
+});
+
+app.post('/incomes', (req, res) => {
+  const { name, amount, date } = req.body;
+  db.run(
+    'INSERT INTO incomes (name, amount, date) VALUES (?, ?, ?)',
+    [name, amount, date],
+    function (err) {
+      if (err) {
+        res.status(500).send(err.message);
+      } else {
+        res.status(201).send({ id: this.lastID });
+      }
+    }
+  );
+});
+
+app.put('/incomes/:id', (req, res) => {
+  const { name, amount, date } = req.body;
+  const { id } = req.params;
+  db.run(
+    'UPDATE incomes SET name = ?, amount = ?, date = ? WHERE id = ?',
+    [name, amount, date, id],
+    function (err) {
+      if (err) {
+        res.status(500).send(err.message);
+      } else {
+        res.send('Income updated successfully');
+      }
+    }
+  );
+});
+
+app.delete('/incomes/:id', (req, res) => {
+  const { id } = req.params;
+  db.run('DELETE FROM incomes WHERE id = ?', [id], function (err) {
+    if (err) {
+      res.status(500).send(err.message);
+    } else {
+      res.send('Income deleted successfully');
+    }
+  });
+});
+
+// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <style>
+    .container {
+      max-width: 800px;
+      margin-top: 50px;
+    }
+  
+    .table-container {
+      margin-top: 50px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="text-center">Monthly Income Registry</h1>
+    <form id="incomeForm">
+      <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" class="form-control border-primary" id="name" required>
+      </div>
+      <div class="mb-3">
+        <label for="amount" class="form-label">Amount</label>
+        <input type="number" class="form-control border-primary" id="amount" required>
+      </div>
+      <div class="mb-3">
+        <label for="date" class="form-label">Date</label>
+        <input type="text" class="form-control border-primary" id="date" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Add Income</button>
+      <button type="submit" class="btn btn-primary float-end" onclick="
+      window.location.href='index.html'
+      ">Return Home</button>
+    </form>
+    <table class="table table-striped mt-4">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="incomeTable">
+        <!-- Categories will be added here dynamically -->
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="1" class="text-center">Income Total</td>
+          <td id="totalAmount"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <script>
+    $(document).ready(function () {
+      $("#date").datepicker({
+        dateFormat: "yy-mm-dd"
+      });
+    });
+  </script>
+  <script src="js/income.js"></script>
+</body>
+
+</html>
