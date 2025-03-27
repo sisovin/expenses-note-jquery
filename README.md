@@ -4,6 +4,7 @@ The **Expenses Notebook App** is a lightweight tool designed to help users manag
 
 ## Key Features:
 - **Expense Management**: Users can add, edit, and delete expense entries.
+- User Authentication (JWT-based login & signup, Argon2, soft-delete Design, Redis caching client).
 - **Category Management**: Users can create and manage categories for better organization of expenses.
 - **CRUD Operations**: Full support for Create, Read, Update, and Delete operations on both expenses and categories.
 - **Dynamic Interface**: The app uses jQuery to dynamically update the UI based on user actions and database changes.
