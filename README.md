@@ -4,6 +4,7 @@ The **Expenses Notebook App** is a lightweight tool designed to help users manag
 
 ## Key Features:
 - **Expense Management**: Users can add, edit, and delete expense entries.
+- User Authentication (JWT-based login & signup, Argon2, soft-delete Design, Redis caching client).
 - **Category Management**: Users can create and manage categories for better organization of expenses.
 - **CRUD Operations**: Full support for Create, Read, Update, and Delete operations on both expenses and categories.
 - **Dynamic Interface**: The app uses jQuery to dynamically update the UI based on user actions and database changes.
@@ -235,3 +236,4 @@ This TOC provides a structured overview of the development phases and tasks for 
   - Create signup and login routes: Add new routes in `backend/server.js` for user signup and login. Use bcrypt to hash passwords during signup and to compare passwords during login.
   - Generate JWT tokens: Upon successful login, generate a JWT token using `jsonwebtoken` and send it back to the client.
   - Protect routes: Create a middleware function to verify JWT tokens and protect routes that require authentication.
+=======
