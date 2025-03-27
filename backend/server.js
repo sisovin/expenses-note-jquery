@@ -3,6 +3,8 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const app = express();
 const dbPath = path.resolve(__dirname, 'datadb', 'expense.db');
@@ -59,6 +61,20 @@ app.get('/init-db', (req, res) => {
         }
       }
     );
+
+    db.run(
+      `CREATE TABLE IF NOT EXISTS users (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          username TEXT NOT NULL,
+          email TEXT NOT NULL,
+          password TEXT NOT NULL
+      )`,
+      (err) => {
+        if (err) {
+          console.error('Error creating users table:', err.message);
+        }
+      }
+    );
   });
 });
 
@@ -67,7 +83,8 @@ app.get('/drop-tables', (req, res) => {
   db.serialize(() => {
     db.run(`DROP TABLE IF EXISTS expenses`);
     db.run(`DROP TABLE IF EXISTS incomes`);
-    db.run(`DROP TABLE IF EXISTS categories`, (err) => {
+    db.run(`DROP TABLE IF EXISTS categories`);
+    db.run(`DROP TABLE IF EXISTS users`, (err) => {
       if (err) {
         res.status(500).send('Error dropping tables');
       } else {
@@ -255,6 +272,54 @@ app.delete('/incomes/:id', (req, res) => {
       res.send('Income deleted successfully');
     }
   });
+});
+
+// User Authentication
+app.post('/signup', (req, res) => {
+  const { username, email, password } = req.body;
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  db.run(
+    'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+    [username, email, hashedPassword],
+    function (err) {
+      if (err) {
+        res.status(500).send('Error signing up');
+      } else {
+        res.status(201).send('User signed up successfully');
+      }
+    }
+  );
+});
+
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+  db.get('SELECT * FROM users WHERE email = ?', [email], (err, user) => {
+    if (err) {
+      res.status(500).send('Error logging in');
+    } else if (!user || !bcrypt.compareSync(password, user.password)) {
+      res.status(401).send('Invalid email or password');
+    } else {
+      const token = jwt.sign({ id: user.id }, 'your_jwt_secret', {
+        expiresIn: '1h',
+      });
+      res.json({ token });
+    }
+  });
+});
+
+const authenticateToken = (req, res, next) => {
+  const token = req.headers['authorization'];
+  if (!token) return res.status(401).send('Access denied');
+  jwt.verify(token, 'your_jwt_secret', (err, user) => {
+    if (err) return res.status(403).send('Invalid token');
+    req.user = user;
+    next();
+  });
+};
+
+// Protect routes
+app.get('/protected', authenticateToken, (req, res) => {
+  res.send('This is a protected route');
 });
 
 // Start server
