@@ -227,3 +227,13 @@ This TOC provides a structured overview of the development phases and tasks for 
   - Highlight key learnings and potential improvements for the future.
 - **Future Enhancements**:
   - Suggest ideas like data export, reporting features, or cloud integration.
+
+### User Authentication
+- **JWT-based login & signup**:
+  - Install necessary dependencies: Add `jsonwebtoken` and `bcrypt` to your project by running `npm install jsonwebtoken bcrypt`.
+  - Create a user model: Add a new table for users in your SQLite database to store user information such as username, email, and hashed password.
+  - Update the database initialization: Modify the `/init-db` endpoint in `backend/server.js` to include the creation of the users table.
+  - Create signup and login routes: Add new routes in `backend/server.js` for user signup and login. Use bcrypt to hash passwords during signup and to compare passwords during login.
+  - Generate JWT tokens: Upon successful login, generate a JWT token using `jsonwebtoken` and send it back to the client.
+  - Protect routes: Create a middleware function to verify JWT tokens and protect routes that require authentication.
+=======
